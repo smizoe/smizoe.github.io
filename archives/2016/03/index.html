@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Trace of Learning Process">
+    <title>Archives: 2016/3 - Trace of Learning Process</title>
+    <meta name="author" content="Sho Mizoe">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta property="og:type" content="blog">
+<meta property="og:title" content="Trace of Learning Process">
+<meta property="og:url" content="http://learning.ptrac.es/archives/2016/03/index.html">
+<meta property="og:site_name" content="Trace of Learning Process">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Trace of Learning Process">
+    
+    
+        
+    
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-ejlztp1tasruqfvoz6xmgqng0anzae8ox7cqjj5yibieqgcmhe9fwxfae6zj.min.css">
+    <!--STYLES END-->
+    
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+
+<header id="header" data-behavior="2">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">Trace of Learning Process</a>
+    </h1>
+    
+        
+            <a  class="header-right-picture "
+                href="#about">
+        
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+<nav id="sidebar" data-behavior="2">
+    
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/ "
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-categories"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-tags"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-archives"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link st-search-show-outputs"
+                         href="#search"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="#about"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link " href="https://github.com/smizoe" target="_blank">
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">github account</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/atom.xml"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+
+            
+            <div id="main" data-behavior="2"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+    
+
+<section class="postShorten-group main-content-wrap">
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+        <div class="postShorten-wrap">
+            <div class="postShorten-header">
+                <h1 class="postShorten-title" itemprop="headline">
+                    
+                        <a class="link-unstyled" href="/2016/03/28/Hidden-Filter-in-Hadoop/">
+                            Hidden Filter in Hadoop
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time itemprop="datePublished" content="Mon Mar 28 2016 22:16:02 GMT-0700">
+	
+		    Mar 28, 2016
+    	
+    </time>
+    
+</div>
+            </div>
+            
+            
+                <div class="postShorten-content" itemprop="articleBody">
+                    <p>When I was testing a mapreduce job written in <a href="https://crunch.apache.org" target="_blank" rel="external">Apache Crunch</a>, I encountered a strange error. Although a file exists, the job won’t find the file; i.e., although it appears in the result of FileSystem#listStatus, an exception is thrown saying ‘Input path does not exist’ when I pass the file name to crunch’s Pipeline#readTextFile.</p>
+<p>After about one hour of struggle, I finally found the cause: if a file name starts with _ (underscore), FileInputFormat silently skips the file. FileInputFormat has a private field named <a href="https://github.com/apache/hadoop/blob/release-2.7.1/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapreduce/lib/input/FileInputFormat.java#L90" target="_blank" rel="external">hidden_filter</a> and this is automatically applied when input paths of a job are read.</p>
+<p>I hope this saves someone’s time…</p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2016/03/28/Hidden-Filter-in-Hadoop/#post-footer" class="postShorten-excerpt_link link">
+                                Comment and share
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+        <div class="postShorten-wrap">
+            <div class="postShorten-header">
+                <h1 class="postShorten-title" itemprop="headline">
+                    
+                        <a class="link-unstyled" href="/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+                            Passing HBase Configurations from Hive Query
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time itemprop="datePublished" content="Sun Mar 06 2016 09:40:48 GMT-0800">
+	
+		    Mar 06, 2016
+    	
+    </time>
+    
+</div>
+            </div>
+            
+            
+                <div class="postShorten-content" itemprop="articleBody">
+                    <p>In the current company, we employ Hive and HBase for storing and processing data. Although HBase has a good java api to make queries to HBase, Hive’s <a href="https://cwiki.apache.org/confluence/display/Hive/HBaseIntegration" target="_blank" rel="external">HBase Integration</a> enables us to aggregate information in HBase with simplicity of SQL.</p>
+<p>Since Hive converts the query to a mapreduce job, as noted in <a href="https://hbase.apache.org/book.html#perf.hbase.client.blockcache" target="_blank" rel="external">HBase’s Document</a>.<br>We also would like to set the number of prefetched rows by a scanner (via Scan#setCaching), since it would result in a poor performance if the value is too low.</p>
+<p>I first found out <a href="http://stackoverflow.com/questions/30074734/tuning-hive-queries-that-uses-underlying-hbase-table" target="_blank" rel="external">a post on stackoverflow</a>, but several of the parameters sugggested seems not to be documented on Hive’s HBase Integration page. The only way to check what is available seems to search Hive source code on github…</p>
+<p>As a result of search, I found 2 classes that gives the answer: <a href="https://github.com/apache/hive/blob/release-1.2.1/hbase-handler/src/java/org/apache/hadoop/hive/hbase/HBaseSerDe.java" target="_blank" rel="external">HBaseSerDe</a> and <a href="https://github.com/apache/hive/blob/release-1.2.1/hbase-handler/src/java/org/apache/hadoop/hive/hbase/HiveHBaseInputFormatUtil.java" target="_blank" rel="external">HiveHBaseInputFormatUtil</a>. According to these classes, 3 parameters are available to us:</p>
+<ul>
+<li>hbase.scan.cache: a value passed to Scan#setCaching method.</li>
+<li>hbase.scan.cacheblock: a value passed to Scan#setCacheBlocks method.</li>
+<li>hbase.scan.batch: a value passed to Scan#setBatch method.</li>
+</ul>
+<p>So basically, you would like to set first two parameters, and set the last parameter when the number of columns in HBase is large.</p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/#post-footer" class="postShorten-excerpt_link link">
+                                Comment and share
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    <div class="pagination-bar">
+    <ul class="pagination">
+        
+        
+        <li class="pagination-number">page 1 of 1</li>
+    </ul>
+</div>
+
+</section>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2016 Sho Mizoe. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+        </div>
+        
+
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <h4 id="about-card-name">Sho Mizoe</h4>
+        
+            <h5 id="about-card-bio"><p>Working on Hadoop and related technologies</p>
+</h5>
+        
+        
+            <h5 id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Engineer at Insikt Inc.</p>
+
+            </h5>
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Santa Clara, CA
+            </h5>
+        
+    </div>
+</div>
+
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/scrip-gfmrkxcl0qohe3cfdgxhzvc0yrceqta8i4iix0txvn8q4o2adlqd5n0jmkvt.min.js"></script>
+<!--SCRIPTS END-->
+
+
+
+</html>
