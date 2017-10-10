@@ -6,19 +6,23 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Trace of Learning Process">
-    <title>Tag: git - Trace of Learning Process</title>
+    <title>Managing Multiple Git Configurations - Trace of Learning Process</title>
     <meta name="author" content="Sho Mizoe">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <meta property="og:type" content="blog">
-<meta property="og:title" content="Trace of Learning Process">
-<meta property="og:url" content="http://learning.ptrac.es/tags/git/index.html">
+    <meta name="description" content="Since I have a personal laptop which is different from the laptop I use at work, I have a problem when I would like to make a commit to my personal repository. (e.g., when I add a new function to my d">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Managing Multiple Git Configurations">
+<meta property="og:url" content="http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/index.html">
 <meta property="og:site_name" content="Trace of Learning Process">
+<meta property="og:description" content="Since I have a personal laptop which is different from the laptop I use at work, I have a problem when I would like to make a commit to my personal repository. (e.g., when I add a new function to my d">
+<meta property="og:updated_time" content="2017-10-10T02:53:26.485Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Trace of Learning Process">
+<meta name="twitter:title" content="Managing Multiple Git Configurations">
+<meta name="twitter:description" content="Since I have a personal laptop which is different from the laptop I use at work, I have a problem when I would like to make a commit to my personal repository. (e.g., when I add a new function to my d">
     
     
         
@@ -41,7 +45,7 @@
 
     
 
-<header id="header" data-behavior="2">
+<header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <h1 class="header-title">
         <a class="header-title-link" href="/ ">Trace of Learning Process</a>
@@ -59,7 +63,7 @@
             <!-- Define author's picture -->
 
 
-<nav id="sidebar" data-behavior="2">
+<nav id="sidebar" data-behavior="4">
     
     
         <ul class="sidebar-buttons">
@@ -170,27 +174,21 @@
 </nav>
 
             
-            <div id="main" data-behavior="2"
+            <div id="main" data-behavior="4"
                  class="
                         hasCoverMetaIn
                         ">
                 
-    
-
-<section class="postShorten-group main-content-wrap">
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
     
     
-    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
-        <div class="postShorten-wrap">
-            <div class="postShorten-header">
-                <h1 class="postShorten-title" itemprop="headline">
-                    
-                        <a class="link-unstyled" href="/2016/08/01/Managing-Multiple-Git-Configurations/">
-                            Managing Multiple Git Configurations
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            Managing Multiple Git Configurations
+        </h1>
+    
+    <div class="post-meta">
     <time itemprop="datePublished" content="Mon Aug 01 2016 21:15:40 GMT-0700">
 	
 		    Aug 01, 2016
@@ -198,11 +196,11 @@
     </time>
     
 </div>
-            </div>
-            
-            
-                <div class="postShorten-content" itemprop="articleBody">
-                    <p>Since I have a personal laptop which is different from the laptop I use at work, I have a problem when I would like to make a commit to my personal repository. (e.g., when I add a new function to my dotfiles, I usually want to use it on my personal laptop.); I need to manage multiple git configurations so that I can commit with my personal user profile instead of my profile in the company (user name, email etc.)</p>
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>Since I have a personal laptop which is different from the laptop I use at work, I have a problem when I would like to make a commit to my personal repository. (e.g., when I add a new function to my dotfiles, I usually want to use it on my personal laptop.); I need to manage multiple git configurations so that I can commit with my personal user profile instead of my profile in the company (user name, email etc.)</p>
 <p>To address this problem, I so far set the following script to git’s pre-commit hook together with a global git config with user.email and user.name set to ‘SET_ME_LOCALLY’:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">if [ &quot;`git config user.name`&quot; == SET_ME_LOCALLY ]; then</div><div class="line">    echo &quot;fatal: user.name is not set locally&quot;</div><div class="line">    exit 1</div><div class="line">fi</div><div class="line">if [ &quot;`git config user.email`&quot; == SET_ME_LOCALLY ]; then</div><div class="line">    echo &quot;fatal: user.email is not set locally&quot;</div><div class="line">    exit 1</div><div class="line">fi</div></pre></td></tr></table></figure>
 <p>Although this stops commit when either of user name or email address is not set, this has a problem: I have to type in my name and email address even when I’m on my personal laptop.<br>To avoid typing my profile every time I make a new repository, I now set the following script as my pre-commit hook:</p>
@@ -216,79 +214,91 @@
 </ol>
 <p>By using this, we can use different values for user names, email addresses and even for other configuration values.</p>
 
-                    
-                        
+            
+                
 
-                    
-                    
-                        <p>
-                            <a href="/2016/08/01/Managing-Multiple-Git-Configurations/#post-footer" class="postShorten-excerpt_link link">
-                                Comment and share
-                            </a>
-                        </p>
-                    
-                </div>
             
         </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
         
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
-        <div class="postShorten-wrap">
-            <div class="postShorten-header">
-                <h1 class="postShorten-title" itemprop="headline">
-                    
-                        <a class="link-unstyled" href="/2016/02/09/Before-Publishing-My-Dotfiles/">
-                            Before Publishing My Dotfiles...
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time itemprop="datePublished" content="Tue Feb 09 2016 21:07:25 GMT-0800">
-	
-		    Feb 09, 2016
-    	
-    </time>
-    
-</div>
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/git/">git</a>
+
             </div>
-            
-            
-                <div class="postShorten-excerpt" itemprop="articleBody">
-                    <p>A lot of people have published their dotfiles,<br> and I have recently published <a href="https://github.com/smizoe/dotfiles">my dotfiles</a> on my github repository.</p>
-<p>Although I have been using git to manage my dotfiles, I did not make it public for a long time,<br>because several files in my dotfiles repository contain sensitive information<br>(for example, my proxy.pac contained FQDN of a proxy server to connect to servers in a datacenter.)</p>
-<p>To bring my repository to a publishable state, I followed the following steps:</p>
-<ol>
-<li><p>after taking a backup of the sensitive files, remove them from the index of git.</p>
-</li>
-<li><p>encrypt the files (using ansible-vault.)</p>
-</li>
-<li><p>put them when running a provision script.</p>
-</li>
-</ol>
-<p>In this post, I explain the steps above I took.</p>
-                    
-                        <a href="/2016/02/09/Before-Publishing-My-Dotfiles/" class="postShorten-excerpt_link link">
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
         
-    </article>
-    
-    <div class="pagination-bar">
-    <ul class="pagination">
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/03/28/Hidden-Filter-in-Hadoop/" data-tooltip="Hidden Filter in Hadoop">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
         
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
         
-        <li class="pagination-number">page 1 of 1</li>
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
     </ul>
 </div>
 
-</section>
+
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
 
 
                 <footer id="footer" class="main-content-wrap">
@@ -298,6 +308,89 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/03/28/Hidden-Filter-in-Hadoop/" data-tooltip="Hidden Filter in Hadoop">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
             
         </div>
         
@@ -338,6 +431,25 @@
     <!--SCRIPTS-->
 <script src="/assets/js/scrip-gfmrkxcl0qohe3cfdgxhzvc0yrceqta8i4iix0txvn8q4o2adlqd5n0jmkvt.min.js"></script>
 <!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://learning.ptrac.es/2016/08/01/Managing-Multiple-Git-Configurations/';
+                 
+                    this.page.identifier = '2016/08/01/Managing-Multiple-Git-Configurations/';
+                                  
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'learning-ptrac-es';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
 
 
 
