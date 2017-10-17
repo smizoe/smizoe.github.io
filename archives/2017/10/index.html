@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Trace of Learning Process">
-    <title>Archives - Trace of Learning Process</title>
+    <title>Archives: 2017/10 - Trace of Learning Process</title>
     <meta name="author" content="Sho Mizoe">
     
     
@@ -15,7 +15,7 @@
     
     <meta property="og:type" content="blog">
 <meta property="og:title" content="Trace of Learning Process">
-<meta property="og:url" content="http://learning.ptrac.es/archives/index.html">
+<meta property="og:url" content="http://learning.ptrac.es/archives/2017/10/index.html">
 <meta property="og:site_name" content="Trace of Learning Process">
 <meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary">
@@ -265,202 +265,6 @@
                                 Comment and share
                             </a>
                         </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
-        <div class="postShorten-wrap">
-            <div class="postShorten-header">
-                <h1 class="postShorten-title" itemprop="headline">
-                    
-                        <a class="link-unstyled" href="/2016/08/01/Managing-Multiple-Git-Configurations/">
-                            Managing Multiple Git Configurations
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time itemprop="datePublished" content="Mon Aug 01 2016 21:15:40 GMT-0700">
-	
-		    Aug 01, 2016
-    	
-    </time>
-    
-</div>
-            </div>
-            
-            
-                <div class="postShorten-content" itemprop="articleBody">
-                    <p>Since I have a personal laptop which is different from the laptop I use at work, I have a problem when I would like to make a commit to my personal repository. (e.g., when I add a new function to my dotfiles, I usually want to use it on my personal laptop.); I need to manage multiple git configurations so that I can commit with my personal user profile instead of my profile in the company (user name, email etc.)</p>
-<p>To address this problem, I so far set the following script to git’s pre-commit hook together with a global git config with user.email and user.name set to ‘SET_ME_LOCALLY’:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">if [ &quot;`git config user.name`&quot; == SET_ME_LOCALLY ]; then</div><div class="line">    echo &quot;fatal: user.name is not set locally&quot;</div><div class="line">    exit 1</div><div class="line">fi</div><div class="line">if [ &quot;`git config user.email`&quot; == SET_ME_LOCALLY ]; then</div><div class="line">    echo &quot;fatal: user.email is not set locally&quot;</div><div class="line">    exit 1</div><div class="line">fi</div></pre></td></tr></table></figure>
-<p>Although this stops commit when either of user name or email address is not set, this has a problem: I have to type in my name and email address even when I’m on my personal laptop.<br>To avoid typing my profile every time I make a new repository, I now set the following script as my pre-commit hook:</p>
-<figure class="highlight bash"><figcaption><span>pre-commit</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="built_in">set</span> -eu</div><div class="line"></div><div class="line"><span class="comment">## We read value of multiuser.config in global git config and find out a config file</span></div><div class="line"><span class="comment">## that we would like to merge with global config.</span></div><div class="line"><span class="comment">## We suport reading only one file since it should suffice for our use case</span></div><div class="line"></div><div class="line"><span class="comment">## currently we skip setup of config if .prev_config file exists in .git directory</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;GIT_DIR&#125;</span>"</span> = <span class="string">"<span class="variable">$(pwd)</span>"</span> ] ; <span class="keyword">then</span></div><div class="line"><span class="comment">## bare repository</span></div><div class="line"><span class="comment">## see https://git-scm.com/docs/githooks/2.9.2</span></div><div class="line">    GIT_CFG_PATH=<span class="string">"<span class="variable">$(pwd)</span>/config"</span></div><div class="line"><span class="keyword">else</span></div><div class="line">    GIT_CFG_PATH=<span class="string">"<span class="variable">$(pwd)</span>/.git/config"</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="keyword">function</span> <span class="function"><span class="title">check_if_merged</span></span>()&#123;</div><div class="line">  <span class="comment">## 1st argument: path to the gitconfig (something like $&#123;worktree_root&#125;/.git/config)</span></div><div class="line"></div><div class="line">  <span class="built_in">set</span> +e</div><div class="line">  <span class="built_in">stat</span> <span class="string">"<span class="variable">$(dirname "$&#123;1&#125;")</span>/.prev_config"</span> &amp;&gt; /dev/null</div><div class="line">  <span class="keyword">if</span> [ <span class="string">"$?"</span> <span class="_">-eq</span> 0 ] ; <span class="keyword">then</span></div><div class="line">      <span class="built_in">echo</span> <span class="string">"We skip setting up config since we have .prev_config file"</span> &gt;&amp;2</div><div class="line">      <span class="built_in">exit</span> 0</div><div class="line">  <span class="keyword">fi</span></div><div class="line">  <span class="built_in">set</span> <span class="_">-e</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">function</span> <span class="function"><span class="title">get_additional_cfg</span></span>()&#123;</div><div class="line">    <span class="comment">## the following command fails if multiuser.confdir is not set</span></div><div class="line">    <span class="built_in">local</span> my_conf_dir=<span class="string">"<span class="variable">$(git config multiuser.confdir)</span>"</span></div><div class="line">    <span class="comment">## we need to expand ~; otherwise ls fails</span></div><div class="line">    <span class="built_in">local</span> my_conf_dir=<span class="string">"<span class="variable">$&#123;my_conf_dir/#\~/$&#123;HOME&#125;</span>&#125;"</span></div><div class="line"></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Please input the prefix of the config file: "</span> &gt;&amp;2</div><div class="line">    <span class="built_in">exec</span> &lt; /dev/tty</div><div class="line">    <span class="built_in">read</span> conf_prefix</div><div class="line"></div><div class="line">    <span class="built_in">local</span> pattern=<span class="string">"<span class="variable">$&#123;my_conf_dir&#125;</span>/<span class="variable">$&#123;conf_prefix&#125;</span>*"</span></div><div class="line">    <span class="built_in">local</span> candidates=($(ls <span class="_">-d</span> <span class="variable">$&#123;pattern&#125;</span>))</div><div class="line"></div><div class="line">    <span class="built_in">local</span> num_matched_files=<span class="string">"<span class="variable">$&#123;#candidates[@]&#125;</span>"</span></div><div class="line">    <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;num_matched_files&#125;</span>"</span> <span class="_">-ne</span> 1 ] ; <span class="keyword">then</span></div><div class="line">        <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;num_matched_files&#125;</span>"</span> <span class="_">-gt</span> 1 ] ; <span class="keyword">then</span></div><div class="line">            <span class="built_in">echo</span> <span class="string">"More than 1 file matched with pattern: <span class="variable">$&#123;pattern&#125;</span>"</span> &gt;&amp;2</div><div class="line">            <span class="built_in">echo</span> <span class="_">-e</span> <span class="string">"The matched files are:\n<span class="variable">$&#123;candidates[@]&#125;</span>\n"</span> &gt;&amp;2</div><div class="line">        <span class="keyword">else</span></div><div class="line">            <span class="built_in">echo</span> <span class="string">"no files mathched with pattern: <span class="variable">$&#123;pattern&#125;</span>"</span> &gt;&amp;2</div><div class="line">        <span class="keyword">fi</span></div><div class="line">        <span class="built_in">echo</span> <span class="_">-e</span> <span class="string">"The files in <span class="variable">$&#123;my_conf_dir&#125;</span> are:\n<span class="variable">$(echo $&#123;my_conf_dir&#125;/*)</span>\n"</span> &gt;&amp;2</div><div class="line">        <span class="built_in">echo</span> <span class="string">"aborted the commit."</span> &gt;&amp;2</div><div class="line">        <span class="built_in">exit</span> 2</div><div class="line">    <span class="keyword">fi</span></div><div class="line"></div><div class="line">    <span class="built_in">echo</span> <span class="string">"<span class="variable">$&#123;candidates[0]&#125;</span>"</span></div><div class="line">    <span class="built_in">return</span> 0</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">function</span> <span class="function"><span class="title">update_conf</span></span>()&#123;</div><div class="line">    <span class="comment">## 1st argument: default config (something like $&#123;worktree_dir&#125;/.git/config)</span></div><div class="line">    <span class="comment">## 2nd argument: additional config which override the default one</span></div><div class="line">    cp <span class="string">"<span class="variable">$&#123;1&#125;</span>"</span> <span class="string">"<span class="variable">$(dirname "$&#123;1&#125;")</span>/.prev_config"</span></div><div class="line">    DEFAULT_CFG=<span class="string">"<span class="variable">$&#123;1&#125;</span>"</span> ADDITIONAL_CFG=<span class="string">"<span class="variable">$&#123;2&#125;</span>"</span> python2 &lt;&lt;EOF</div><div class="line">from __future__ import <span class="built_in">print</span>_<span class="keyword">function</span></div><div class="line">from StringIO import StringIO</div><div class="line">from ConfigParser import ConfigParser</div><div class="line">import os</div><div class="line"></div><div class="line">cfg_file = os.environ[<span class="string">'DEFAULT_CFG'</span>]</div><div class="line">override_file = os.environ[<span class="string">'ADDITIONAL_CFG'</span>]</div><div class="line">parser = ConfigParser()</div><div class="line"></div><div class="line"><span class="keyword">for</span> filename <span class="keyword">in</span> [cfg_file, override_file]:</div><div class="line">  with open(filename, <span class="string">"r"</span>) as cfg_io:</div><div class="line">    ini = <span class="string">''</span>.join(map(lambda line: line.lstrip(), cfg_io.readlines()))</div><div class="line">    parser.readfp(StringIO(ini))</div><div class="line"></div><div class="line">with open(cfg_file, <span class="string">"w"</span>) as f:</div><div class="line">  <span class="keyword">for</span> section_name <span class="keyword">in</span> parser.sections():</div><div class="line">    f.write(<span class="string">"[&#123;&#125;]\n"</span>.format(section_name))</div><div class="line">    <span class="keyword">for</span> k, v <span class="keyword">in</span> parser.items(section_name):</div><div class="line">      f.write(<span class="string">"\t&#123;&#125; = &#123;&#125;\n"</span>.format(k, v))</div><div class="line">EOF</div><div class="line">&#125;</div><div class="line"></div><div class="line">check_<span class="keyword">if</span>_merged <span class="string">"<span class="variable">$&#123;GIT_CFG_PATH&#125;</span>"</span></div><div class="line">additional_cfg=<span class="string">"<span class="variable">$(get_additional_cfg)</span>"</span></div><div class="line">update_conf <span class="string">"<span class="variable">$&#123;GIT_CFG_PATH&#125;</span>"</span> <span class="string">"<span class="variable">$&#123;additional_cfg&#125;</span>"</span></div><div class="line"><span class="comment">## we need to reload config by exiting the current process</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"update finished. Please retry the commit. (This commit will exit with 1)"</span> &gt;&amp;2</div><div class="line"><span class="built_in">exit</span> 1</div><div class="line"></div></pre></td></tr></table></figure>
-<p>The code above does the following:</p>
-<ol>
-<li>checks if .git directory contains a file named .prev_config. If it did, this script exits with 0.</li>
-<li>gets a list of git configuration files stored in a directory specified by value of multiuser.confdir in the global git config.</li>
-<li>prompts the user to input (the prefix of) a git config to use.</li>
-<li>merges the repository’s local config file with the specified file and puts it to .git/config. The previous config file is backed up as .git/.prev_confing.</li>
-</ol>
-<p>By using this, we can use different values for user names, email addresses and even for other configuration values.</p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2016/08/01/Managing-Multiple-Git-Configurations/#post-footer" class="postShorten-excerpt_link link">
-                                Comment and share
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
-        <div class="postShorten-wrap">
-            <div class="postShorten-header">
-                <h1 class="postShorten-title" itemprop="headline">
-                    
-                        <a class="link-unstyled" href="/2016/03/28/Hidden-Filter-in-Hadoop/">
-                            Hidden Filter in Hadoop
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time itemprop="datePublished" content="Mon Mar 28 2016 22:16:02 GMT-0700">
-	
-		    Mar 28, 2016
-    	
-    </time>
-    
-</div>
-            </div>
-            
-            
-                <div class="postShorten-content" itemprop="articleBody">
-                    <p>When I was testing a mapreduce job written in <a href="https://crunch.apache.org" target="_blank" rel="external">Apache Crunch</a>, I encountered a strange error. Although a file exists, the job won’t find the file; i.e., although it appears in the result of FileSystem#listStatus, an exception is thrown saying ‘Input path does not exist’ when I pass the file name to crunch’s Pipeline#readTextFile.</p>
-<p>After about one hour of struggle, I finally found the cause: if a file name starts with _ (underscore), FileInputFormat silently skips the file. FileInputFormat has a private field named <a href="https://github.com/apache/hadoop/blob/release-2.7.1/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapreduce/lib/input/FileInputFormat.java#L90" target="_blank" rel="external">hidden_filter</a> and this is automatically applied when input paths of a job are read.</p>
-<p>I hope this saves someone’s time…</p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2016/03/28/Hidden-Filter-in-Hadoop/#post-footer" class="postShorten-excerpt_link link">
-                                Comment and share
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
-        <div class="postShorten-wrap">
-            <div class="postShorten-header">
-                <h1 class="postShorten-title" itemprop="headline">
-                    
-                        <a class="link-unstyled" href="/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
-                            Passing HBase Configurations from Hive Query
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time itemprop="datePublished" content="Sun Mar 06 2016 09:40:48 GMT-0800">
-	
-		    Mar 06, 2016
-    	
-    </time>
-    
-</div>
-            </div>
-            
-            
-                <div class="postShorten-content" itemprop="articleBody">
-                    <p>In the current company, we employ Hive and HBase for storing and processing data. Although HBase has a good java api to make queries to HBase, Hive’s <a href="https://cwiki.apache.org/confluence/display/Hive/HBaseIntegration" target="_blank" rel="external">HBase Integration</a> enables us to aggregate information in HBase with simplicity of SQL.</p>
-<p>Since Hive converts the query to a mapreduce job, as noted in <a href="https://hbase.apache.org/book.html#perf.hbase.client.blockcache" target="_blank" rel="external">HBase’s Document</a>.<br>We also would like to set the number of prefetched rows by a scanner (via Scan#setCaching), since it would result in a poor performance if the value is too low.</p>
-<p>I first found out <a href="http://stackoverflow.com/questions/30074734/tuning-hive-queries-that-uses-underlying-hbase-table" target="_blank" rel="external">a post on stackoverflow</a>, but several of the parameters sugggested seems not to be documented on Hive’s HBase Integration page. The only way to check what is available seems to search Hive source code on github…</p>
-<p>As a result of search, I found 2 classes that gives the answer: <a href="https://github.com/apache/hive/blob/release-1.2.1/hbase-handler/src/java/org/apache/hadoop/hive/hbase/HBaseSerDe.java" target="_blank" rel="external">HBaseSerDe</a> and <a href="https://github.com/apache/hive/blob/release-1.2.1/hbase-handler/src/java/org/apache/hadoop/hive/hbase/HiveHBaseInputFormatUtil.java" target="_blank" rel="external">HiveHBaseInputFormatUtil</a>. According to these classes, 3 parameters are available to us:</p>
-<ul>
-<li>hbase.scan.cache: a value passed to Scan#setCaching method.</li>
-<li>hbase.scan.cacheblock: a value passed to Scan#setCacheBlocks method.</li>
-<li>hbase.scan.batch: a value passed to Scan#setBatch method.</li>
-</ul>
-<p>So basically, you would like to set first two parameters, and set the last parameter when the number of columns in HBase is large.</p>
-
-                    
-                        
-
-                    
-                    
-                        <p>
-                            <a href="/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/#post-footer" class="postShorten-excerpt_link link">
-                                Comment and share
-                            </a>
-                        </p>
-                    
-                </div>
-            
-        </div>
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
-        <div class="postShorten-wrap">
-            <div class="postShorten-header">
-                <h1 class="postShorten-title" itemprop="headline">
-                    
-                        <a class="link-unstyled" href="/2016/02/09/Before-Publishing-My-Dotfiles/">
-                            Before Publishing My Dotfiles...
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time itemprop="datePublished" content="Tue Feb 09 2016 21:07:25 GMT-0800">
-	
-		    Feb 09, 2016
-    	
-    </time>
-    
-</div>
-            </div>
-            
-            
-                <div class="postShorten-excerpt" itemprop="articleBody">
-                    <p>A lot of people have published their dotfiles,<br> and I have recently published <a href="https://github.com/smizoe/dotfiles" target="_blank" rel="external">my dotfiles</a> on my github repository.</p>
-<p>Although I have been using git to manage my dotfiles, I did not make it public for a long time,<br>because several files in my dotfiles repository contain sensitive information<br>(for example, my proxy.pac contained FQDN of a proxy server to connect to servers in a datacenter.)</p>
-<p>To bring my repository to a publishable state, I followed the following steps:</p>
-<ol>
-<li><p>after taking a backup of the sensitive files, remove them from the index of git.</p>
-</li>
-<li><p>encrypt the files (using ansible-vault.)</p>
-</li>
-<li><p>put them when running a provision script.</p>
-</li>
-</ol>
-<p>In this post, I explain the steps above I took.</p>
-                    
-                        <a href="/2016/02/09/Before-Publishing-My-Dotfiles/" class="postShorten-excerpt_link link">
-                            Continue reading
-                        </a>
-                        
                     
                 </div>
             

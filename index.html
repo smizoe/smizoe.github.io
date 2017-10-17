@@ -17,6 +17,7 @@
 <meta property="og:title" content="Trace of Learning Process">
 <meta property="og:url" content="http://learning.ptrac.es/index.html">
 <meta property="og:site_name" content="Trace of Learning Process">
+<meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Trace of Learning Process">
     
@@ -177,6 +178,98 @@
                 
 
 <section class="postShorten-group main-content-wrap">
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+        <div class="postShorten-wrap">
+            <div class="postShorten-header">
+                <h1 class="postShorten-title" itemprop="headline">
+                    
+                        <a class="link-unstyled" href="/2017/10/16/Let-s-Test-SQL-Queries-Using-Datalog/">
+                            Let&#39;s Test SQL Queries Using Datalog
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time itemprop="datePublished" content="Mon Oct 16 2017 23:24:49 GMT-0700">
+	
+		    Oct 16, 2017
+    	
+    </time>
+    
+</div>
+            </div>
+            
+            
+                <div class="postShorten-content" itemprop="articleBody">
+                    <p>I’m not sure if this is a common practice, but I prefer testing my SQL queries.<br>As far as I know, there are at least 3 ways to test SQL queries:</p>
+<ol>
+<li>checking if the query runs on the real data (a.k.a. no testing)</li>
+<li>providing input data and the expected result (that is calculated manually) and comparing the actual result with the expected one</li>
+<li>after writing an equivalent query in a non-SQL language (in, e.g., Active Record or datalog), checking outputs from the SQL query and the new query by issuing them onto certain input data</li>
+</ol>
+<p>In the past I adopted option 2 mainly. Although we can accumulate test cases by adopting option 2, this way of testing is tedious and incomplete because:</p>
+<ul>
+<li>we have to calculate the output by hand; This is error-prone and time-consuming. (although we may write code for calculating the output, it would require testing for itself…)</li>
+<li>if we change our queries in future, we need to recalculate everything manually</li>
+<li>we cannot test on unknown failure cases; i.e., we cannot use randomly generated cases</li>
+</ul>
+<p>If we ask ‘can we solve these by using option 3?’, the answer is yes since:</p>
+<ul>
+<li>we can generate both outputs (from SQL and some other language) programmatically, rather than manually</li>
+<li>we can adapt to the new case by changing the existing test code, which does not require much calculation by hand</li>
+<li>since both SQL and the language used for testing can process a lot of data (at least much more than human beings can), we can apply randomized testing.</li>
+</ul>
+<p>In the following, I’ll show you how we can test SQL using <a href="https://sites.google.com/site/pydatalog/home" target="_blank" rel="external">pyDatalog</a>, a logic programming library in Python.</p>
+<h1 id="Installation-of-Packages"><a href="#Installation-of-Packages" class="headerlink" title="Installation of Packages"></a>Installation of Packages</h1><p>Let’s start by installing required packages with <a href="https://packaging.python.org/new-tutoriAls/installing-and-using-packages/#installing-pipenv" target="_blank" rel="external">pipenv</a>.<br>To do so, all we need to do is create an empty directory and put <code>Pipfile</code> with the following content:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">[[source]]</div><div class="line"></div><div class="line">url = &quot;https://pypi.python.org/simple&quot;</div><div class="line">verify_ssl = true</div><div class="line">name = &quot;pypi&quot;</div><div class="line"></div><div class="line"></div><div class="line">[packages]</div><div class="line"></div><div class="line">pydatalog = &quot;*&quot;</div><div class="line">ipython = &quot;*&quot;</div><div class="line">sqlalchemy = &quot;*&quot;</div><div class="line">pandas = &quot;*&quot;</div><div class="line"></div><div class="line"></div><div class="line">[dev-packages]</div></pre></td></tr></table></figure>
+<p>Then inside the directory, let’s run the following command:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ pipenv install</div></pre></td></tr></table></figure>
+<p>This should install 4 packages (<code>pyDatalog</code>, <code>pandas</code>, <code>ipython</code> and <code>sqlalchemy</code>)and their dependencies.<br>(In a real environment, you may want to list these in <code>dev-packages</code> section.)</p>
+<h1 id="Testing-Queries-with-pyDatalog"><a href="#Testing-Queries-with-pyDatalog" class="headerlink" title="Testing Queries with pyDatalog"></a>Testing Queries with pyDatalog</h1><p>In this example, we use sqlite and consider 2 tables generated by the following DDL:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tbl1(</div><div class="line">  <span class="keyword">id</span> <span class="built_in">integer</span> PRIMARY <span class="keyword">KEY</span>,</div><div class="line">  col1 <span class="built_in">text</span>,</div><div class="line">  created_date <span class="built_in">text</span>  <span class="comment">-- use text since datetime/date does not work well with sqlalchemy</span></div><div class="line">);</div></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tbl2(</div><div class="line">  <span class="keyword">id</span> <span class="built_in">integer</span> PRIMARY <span class="keyword">KEY</span>,</div><div class="line">  tbl1_id <span class="built_in">integer</span>,</div><div class="line">  col2 <span class="built_in">text</span></div><div class="line">);</div></pre></td></tr></table></figure>
+<p>Here <code>tbl1_id</code> column in <code>tbl2</code> associates a record in <code>tbl2</code> with one or more records in <code>tbl1</code>.</p>
+<p>Let’s create these tables and corresponding datalog terms:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</div><div class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker</div><div class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</div><div class="line"></div><div class="line"><span class="keyword">from</span> pyDatalog <span class="keyword">import</span> pyDatalog</div><div class="line"></div><div class="line">engine = create_engine(<span class="string">'sqlite://'</span>)</div><div class="line"></div><div class="line">engine.execute(<span class="string">"""</span></div><div class="line">CREATE TABLE tbl1(</div><div class="line">  id integer PRIMARY KEY,</div><div class="line">  col1 text,</div><div class="line">  created_date text</div><div class="line">);</div><div class="line">""")</div><div class="line">engine.execute(<span class="string">"""</span></div><div class="line">INSERT INTO tbl1(col1, created_date)</div><div class="line">VALUES ('foo', '2017-10-11'), ('bar', '2017-10-12');</div><div class="line">""")</div><div class="line"></div><div class="line">engine.execute(<span class="string">"""</span></div><div class="line">CREATE TABLE tbl2(</div><div class="line">  id integer PRIMARY KEY,</div><div class="line">  tbl1_id integer,</div><div class="line">  col2 text</div><div class="line">);</div><div class="line">""")</div><div class="line">engine.execute(<span class="string">"""</span></div><div class="line">INSERT INTO tbl2(tbl1_id, col2)</div><div class="line">VALUES (1, 2), (3, 3);</div><div class="line">""")</div><div class="line"></div><div class="line"></div><div class="line">Base = declarative_base(bind=engine, cls=pyDatalog.Mixin, metaclass=pyDatalog.sqlMetaMixin)</div><div class="line">Session = sessionmaker(bind=engine)</div><div class="line">session = Session()</div><div class="line">Base.session = session</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tbl1</span><span class="params">(Base)</span>:</span></div><div class="line">    __tablename__ = <span class="string">'tbl1'</span></div><div class="line">    __table_args__ = &#123;<span class="string">'autoload'</span>:<span class="keyword">True</span>&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tbl2</span><span class="params">(Base)</span>:</span></div><div class="line">    __tablename__ = <span class="string">'tbl2'</span></div><div class="line">    __table_args__ = &#123;<span class="string">'autoload'</span>:<span class="keyword">True</span>&#125;</div></pre></td></tr></table></figure>
+<h2 id="Case-1-Parameterized-Query"><a href="#Case-1-Parameterized-Query" class="headerlink" title="Case 1: Parameterized Query"></a>Case 1: Parameterized Query</h2><p>When we write a batch job, we may want to parameterize a query so that we can specify the target date:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span></div><div class="line">  *</div><div class="line"><span class="keyword">FROM</span></div><div class="line">  tbl1</div><div class="line"><span class="keyword">WHERE</span></div><div class="line">  created_date = ?</div></pre></td></tr></table></figure>
+<p>An equivalent query can be written in pyDatalog. We run the following as preparation for the actual query:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_df</span><span class="params">(answers)</span>:</span></div><div class="line">    <span class="string">"""make a pandas dataframe from pyDatalog.Answer.answers field,</span></div><div class="line">    which contains a list of tuples</div><div class="line">    """</div><div class="line">    <span class="keyword">return</span> pd.DataFrame([</div><div class="line">        dict(id=tup[<span class="number">0</span>].id,</div><div class="line">             col1=tup[<span class="number">0</span>].col1,</div><div class="line">             created_date=tup[<span class="number">0</span>].created_date) <span class="keyword">for</span> tup <span class="keyword">in</span> answers</div><div class="line">    ])</div><div class="line"></div><div class="line"><span class="meta">@pyDatalog.program()</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parameterized_query_example</span><span class="params">()</span>:</span></div><div class="line">    Tbl1.records_today(X, Today) &lt;= (Tbl1.created_date[X] == Today)</div></pre></td></tr></table></figure>
+<p>If we want to query in pyDatalog, we use <code>pyDatalog.ask</code> method:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ans = pyDatalog.ask(<span class="string">'Tbl1.records_today(X, "&#123;dt&#125;")'</span>.format(dt=<span class="string">'2017-10-12'</span>)).answers</div><div class="line">by_datalog = get_df(ans)</div></pre></td></tr></table></figure>
+<p>Since we get a result, let’s compare it with the result from the sql using <a href="https://pandas.pydata.org/pandas-docs/stable/generated/pandas.testing.assert_frame_equal.html" target="_blank" rel="external">assert_frame_equal</a> from pandas:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">from pandas.testing import assert_frame_equal</div><div class="line">sql = &quot;&quot;&quot;</div><div class="line">SELECT</div><div class="line">  *</div><div class="line">FROM</div><div class="line">  tbl1</div><div class="line">WHERE</div><div class="line">  created_date = ?</div><div class="line">&quot;&quot;&quot;</div><div class="line">by_sql = pd.read_sql(sql, engine, params=(&apos;2017-10-12&apos;,))</div><div class="line">assert_frame_equal(by_sql[sorted(by_sql.columns)], by_datalog[sorted(by_datalog.columns)])</div><div class="line"># =&gt; passes</div></pre></td></tr></table></figure>
+<p>We successfully tested the SQL!</p>
+<h2 id="Case-2-Join"><a href="#Case-2-Join" class="headerlink" title="Case 2: Join"></a>Case 2: Join</h2><p>Now let’s consider the following query:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span></div><div class="line">  tbl1.id <span class="keyword">AS</span> id1,</div><div class="line">  tbl2.id <span class="keyword">AS</span> id2</div><div class="line"><span class="keyword">FROM</span></div><div class="line">  tbl1</div><div class="line"><span class="keyword">LEFT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span></div><div class="line">  tbl2</div><div class="line"><span class="keyword">ON</span></div><div class="line">  tbl1.id = tbl2.tbl1_id</div></pre></td></tr></table></figure>
+<p>Since we have no record associated with the record with id 2, we need to keep this record in datalog.<br>We can achieve this in the following manner:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@pyDatalog.program()</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">left_join_example</span><span class="params">()</span>:</span></div><div class="line">    has_id1(Z, X) &lt;= (Tbl1.id[X] == Z)</div><div class="line">    has_id2(Z, Y) &lt;= (Tbl2.tbl1_id[Y] == Z)</div><div class="line">    left_join(Z, X, Y) &lt;= has_id1(Z, X) &amp; has_id2(Z, Y)</div><div class="line">    left_join(Z, X, <span class="keyword">None</span>) &lt;= has_id1(Z, X) &amp; ~has_id2(Z, Y)</div></pre></td></tr></table></figure>
+<p>Let’s compare the results from datalog and SQL:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_lj_df</span><span class="params">(answers)</span>:</span></div><div class="line">    <span class="keyword">return</span> pd.DataFrame([</div><div class="line">        dict(id1=r1.id, id2=<span class="keyword">None</span> <span class="keyword">if</span> r2 <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">else</span> r2.id)</div><div class="line">        <span class="keyword">for</span> __, r1, r2 <span class="keyword">in</span> answers</div><div class="line">    ])</div><div class="line"></div><div class="line">by_datalog = get_lj_df(pyDatalog.ask(<span class="string">"left_join(Z, X, Y)"</span>).answers)</div><div class="line"></div><div class="line">sql2 = <span class="string">"""</span></div><div class="line">SELECT</div><div class="line">  tbl1.id AS id1,</div><div class="line">  tbl2.id AS id2</div><div class="line">FROM</div><div class="line">  tbl1</div><div class="line">LEFT OUTER JOIN</div><div class="line">  tbl2</div><div class="line">ON</div><div class="line">  tbl1.id = tbl2.tbl1_id</div><div class="line">"""</div><div class="line">by_sql = pd.read_sql(sql2, engine)</div><div class="line"></div><div class="line"><span class="comment">## prepare for comparison</span></div><div class="line">by_sql = (</div><div class="line">    by_sql[sorted(by_sql.columns)]</div><div class="line">    .sort_values([<span class="string">'id1'</span>, <span class="string">'id2'</span>])</div><div class="line">    .reset_index(drop=<span class="keyword">True</span>)</div><div class="line">)</div><div class="line">by_datalog = (</div><div class="line">    by_datalog[sorted(by_datalog.columns)]</div><div class="line">    .sort_values([<span class="string">'id1'</span>, <span class="string">'id2'</span>])</div><div class="line">    .reset_index(drop=<span class="keyword">True</span>)</div><div class="line">)</div><div class="line"></div><div class="line">assert_frame_equal(by_sql, by_datalog)</div><div class="line"><span class="comment"># =&gt; passes</span></div></pre></td></tr></table></figure>
+<p>So we can test a query with joins, even if some of them are outer joins!</p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>We can test SQL using datalog and it has the following strength, compared to testing by specifying a pair of input and output:</p>
+<ul>
+<li>it lets us avoid manual calculation</li>
+<li>it lets us use randomized input instances</li>
+</ul>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2017/10/16/Let-s-Test-SQL-Queries-Using-Datalog/#post-footer" class="postShorten-excerpt_link link">
+                                Comment and share
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
     
     
     <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
@@ -350,7 +443,7 @@
             
             
                 <div class="postShorten-excerpt" itemprop="articleBody">
-                    <p>A lot of people have published their dotfiles,<br> and I have recently published <a href="https://github.com/smizoe/dotfiles">my dotfiles</a> on my github repository.</p>
+                    <p>A lot of people have published their dotfiles,<br> and I have recently published <a href="https://github.com/smizoe/dotfiles" target="_blank" rel="external">my dotfiles</a> on my github repository.</p>
 <p>Although I have been using git to manage my dotfiles, I did not make it public for a long time,<br>because several files in my dotfiles repository contain sensitive information<br>(for example, my proxy.pac contained FQDN of a proxy server to connect to servers in a datacenter.)</p>
 <p>To bring my repository to a publishable state, I followed the following steps:</p>
 <ol>
