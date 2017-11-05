@@ -185,6 +185,52 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title" itemprop="headline">
                     
+                        <a class="link-unstyled" href="/2017/11/04/How-to-Insert-into-a-non-Public-Schema-in-Postgres-with-Odo/">
+                            How to Insert into a non-Public Schema in Postgres with Odo
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time itemprop="datePublished" content="Sat Nov 04 2017 21:28:14 GMT-0700">
+	
+		    Nov 04, 2017
+    	
+    </time>
+    
+</div>
+            </div>
+            
+            
+                <div class="postShorten-content" itemprop="articleBody">
+                    <p><a href="http://odo.pydata.org/en/latest/" target="_blank" rel="external">Odo</a>(<a href="https://github.com/blaze/odo" target="_blank" rel="external">the github repository of Odo</a>) is a great tool for moving data from one place/format to another. But when I tried to transfer data in the csv format into a table in a non-public schema in a PostgreSQL database, it took some time to find out how to do it with odo.</p>
+<p>At first I could not load data even to a table in the public schema since it uses <code>COPY :tbl FROM :path</code> (see <a href="https://github.com/blaze/odo/blob/0.5.0/odo/backends/sql_csv.py#L157" target="_blank" rel="external">this line</a>).<br>Fortunately loading csv files into PostgreSQL is available on master branch or v0.5.1 branch, so it’s resolved by specifying these branches at installation.</p>
+<p>Another problem was it’s unclear how to specify the name of the schema. When I looked at <a href="https://github.com/blaze/odo/blob/0.5.1/bin/odo" target="_blank" rel="external">the source code of odo CLI</a>, it turned out it’s very straight-forward with it:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ odo path/to/data.csv postgres://user:pass@host/dbname::table_name --schema schema_name</div></pre></td></tr></table></figure>
+<p>As you can see from the source, you can specify any keyword arguments that are accepted by <code>odo</code> function.</p>
+
+                    
+                        
+
+                    
+                    
+                        <p>
+                            <a href="/2017/11/04/How-to-Insert-into-a-non-Public-Schema-in-Postgres-with-Odo/#post-footer" class="postShorten-excerpt_link link">
+                                Comment and share
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
+    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+        <div class="postShorten-wrap">
+            <div class="postShorten-header">
+                <h1 class="postShorten-title" itemprop="headline">
+                    
                         <a class="link-unstyled" href="/2017/10/16/Let-s-Test-SQL-Queries-Using-Datalog/">
                             Let&#39;s Test SQL Queries Using Datalog
                         </a>
