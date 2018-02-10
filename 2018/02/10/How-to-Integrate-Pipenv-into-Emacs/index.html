@@ -6,25 +6,25 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Trace of Learning Process">
-    <title>Passing HBase Configurations from Hive Query - Trace of Learning Process</title>
+    <title>How to Integrate Pipenv into Emacs - Trace of Learning Process</title>
     <meta name="author" content="Sho Mizoe">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <meta name="description" content="In the current company, we employ Hive and HBase for storing and processing data. Although HBase has a good java api to make queries to HBase, Hive’s HBase Integration enables us to aggregate informat">
-<meta name="keywords" content="MapReduce,Hive,HBase">
+    <meta name="description" content="In the past, I mainly used virtualenv and venv to manage packages for each project, but recently a new package management tool for python has been becoming popular. The new package management tool, Pi">
+<meta name="keywords" content="emacs,python">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Passing HBase Configurations from Hive Query">
-<meta property="og:url" content="http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/index.html">
+<meta property="og:title" content="How to Integrate Pipenv into Emacs">
+<meta property="og:url" content="http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/index.html">
 <meta property="og:site_name" content="Trace of Learning Process">
-<meta property="og:description" content="In the current company, we employ Hive and HBase for storing and processing data. Although HBase has a good java api to make queries to HBase, Hive’s HBase Integration enables us to aggregate informat">
+<meta property="og:description" content="In the past, I mainly used virtualenv and venv to manage packages for each project, but recently a new package management tool for python has been becoming popular. The new package management tool, Pi">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2017-10-10T02:53:29.381Z">
+<meta property="og:updated_time" content="2018-02-10T21:50:55.925Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Passing HBase Configurations from Hive Query">
-<meta name="twitter:description" content="In the current company, we employ Hive and HBase for storing and processing data. Although HBase has a good java api to make queries to HBase, Hive’s HBase Integration enables us to aggregate informat">
+<meta name="twitter:title" content="How to Integrate Pipenv into Emacs">
+<meta name="twitter:description" content="In the past, I mainly used virtualenv and venv to manage packages for each project, but recently a new package management tool for python has been becoming popular. The new package management tool, Pi">
     
     
         
@@ -187,13 +187,13 @@
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title" itemprop="headline">
-            Passing HBase Configurations from Hive Query
+            How to Integrate Pipenv into Emacs
         </h1>
     
     <div class="post-meta">
-    <time itemprop="datePublished" content="Sun Mar 06 2016 09:40:48 GMT-0800">
+    <time itemprop="datePublished" content="Sat Feb 10 2018 13:50:55 GMT-0800">
 	
-		    Mar 06, 2016
+		    Feb 10, 2018
     	
     </time>
     
@@ -202,16 +202,21 @@
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p>In the current company, we employ Hive and HBase for storing and processing data. Although HBase has a good java api to make queries to HBase, Hive’s <a href="https://cwiki.apache.org/confluence/display/Hive/HBaseIntegration" target="_blank" rel="external">HBase Integration</a> enables us to aggregate information in HBase with simplicity of SQL.</p>
-<p>Since Hive converts the query to a mapreduce job, as noted in <a href="https://hbase.apache.org/book.html#perf.hbase.client.blockcache" target="_blank" rel="external">HBase’s Document</a>.<br>We also would like to set the number of prefetched rows by a scanner (via Scan#setCaching), since it would result in a poor performance if the value is too low.</p>
-<p>I first found out <a href="http://stackoverflow.com/questions/30074734/tuning-hive-queries-that-uses-underlying-hbase-table" target="_blank" rel="external">a post on stackoverflow</a>, but several of the parameters sugggested seems not to be documented on Hive’s HBase Integration page. The only way to check what is available seems to search Hive source code on github…</p>
-<p>As a result of search, I found 2 classes that gives the answer: <a href="https://github.com/apache/hive/blob/release-1.2.1/hbase-handler/src/java/org/apache/hadoop/hive/hbase/HBaseSerDe.java" target="_blank" rel="external">HBaseSerDe</a> and <a href="https://github.com/apache/hive/blob/release-1.2.1/hbase-handler/src/java/org/apache/hadoop/hive/hbase/HiveHBaseInputFormatUtil.java" target="_blank" rel="external">HiveHBaseInputFormatUtil</a>. According to these classes, 3 parameters are available to us:</p>
-<ul>
-<li>hbase.scan.cache: a value passed to Scan#setCaching method.</li>
-<li>hbase.scan.cacheblock: a value passed to Scan#setCacheBlocks method.</li>
-<li>hbase.scan.batch: a value passed to Scan#setBatch method.</li>
-</ul>
-<p>So basically, you would like to set first two parameters, and set the last parameter when the number of columns in HBase is large.</p>
+            <p>In the past, I mainly used <a href="https://virtualenv.pypa.io/en/stable/" target="_blank" rel="external">virtualenv</a> and <a href="https://docs.python.org/3/library/venv.html" target="_blank" rel="external">venv</a> to manage packages for each project, but recently a new package management tool for python has been becoming popular. The new package management tool, <a href="https://github.com/pypa/pipenv" target="_blank" rel="external">Pipenv</a>, is now recommended in the official python page.</p>
+<p>I have been working on switching from older tools to pipenv, but there have been one obstacle against it; the lack of emacs-pipenv integration (there is <a href="https://github.com/pwalsh/pipenv.el" target="_blank" rel="external">pipenv.el</a> today, so you might want to use it rather than writing your own.)<br>After digging into this issue, it turned out it’s fairly easy to integrate these two.</p>
+<p>In this post, I will present one way to integrate pipenv with emacs with tens of lines of emacs lisp, by means of <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html." target="_blank" rel="external">advice feature</a></p>
+<h2 id="Purpose"><a href="#Purpose" class="headerlink" title="Purpose"></a>Purpose</h2><p>I set the following purpose for emacs-pipenv integration:</p>
+<ol>
+<li>activation of a virtual environment associated with the file of a buffer before running a (elisp) function that uses python internally. e.g., we want to enable a virtual environment when we call run-python function.</li>
+<li>calling the function with the virtual environment active</li>
+<li>deactivation of the virtual environment after the function finishes</li>
+</ol>
+<p>Since my main entry point for python is run-python function, I focus on an advice function for this function.</p>
+<h2 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h2><p>Since <code>pipenv --venv</code> returns a virtual environment for the current directory (assuming there is a Pipfile in it or one of its ancestor directory), we can easily make an advice function:</p>
+<script src="//gist.github.com/5b1751c8ca15182be7f49c19f547ab0c.js"></script>
+<p><code>advice-pipenv-venv</code> is the most important function and can be used as:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(advice-add #&apos;run-python :around #&apos;advice-pipenv-venv)</div></pre></td></tr></table></figure>
+<p>Now we don’t need to think about which virtualenv we should activate, since the right one is automatically selected!</p>
 
             
                 
@@ -224,7 +229,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/HBase/">HBase</a> <a class="tag tag--primary tag--small t-link" href="/tags/Hive/">Hive</a> <a class="tag tag--primary tag--small t-link" href="/tags/MapReduce/">MapReduce</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/emacs/">emacs</a> <a class="tag tag--primary tag--small t-link" href="/tags/python/">python</a>
 
             </div>
         
@@ -233,7 +238,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/03/28/Hidden-Filter-in-Hadoop/"  data-tooltip="Hidden Filter in Hadoop">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
@@ -241,7 +246,7 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/02/09/Before-Publishing-My-Dotfiles/" data-tooltip="Before Publishing My Dotfiles...">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/04/How-to-Insert-into-a-non-Public-Schema-in-Postgres-with-Odo/" data-tooltip="How to Insert into a non-Public Schema in Postgres with Odo">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
                     <i class="fa fa-angle-right"></i>
@@ -256,17 +261,17 @@
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -314,7 +319,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/03/28/Hidden-Filter-in-Hadoop/"  data-tooltip="Hidden Filter in Hadoop">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
@@ -322,7 +327,7 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/02/09/Before-Publishing-My-Dotfiles/" data-tooltip="Before Publishing My Dotfiles...">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/04/How-to-Insert-into-a-non-Public-Schema-in-Postgres-with-Odo/" data-tooltip="How to Insert into a non-Public Schema in Postgres with Odo">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
                     <i class="fa fa-angle-right"></i>
@@ -337,17 +342,17 @@
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -373,17 +378,17 @@
                 <div id="share-options-bar" class="share-options-bar" data-behavior="4">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/">
                 <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/">
                 <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/">
                 <i class="fa fa-twitter"></i><span>Share on Twitter</span>
             </a>
         </li>
@@ -434,9 +439,9 @@
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'http://learning.ptrac.es/2016/03/06/Passing-HBase-Configurations-from-Hive-Query/';
+                 this.page.url = 'http://learning.ptrac.es/2018/02/10/How-to-Integrate-Pipenv-into-Emacs/';
                  
-                    this.page.identifier = '2016/03/06/Passing-HBase-Configurations-from-Hive-Query/';
+                    this.page.identifier = '2018/02/10/How-to-Integrate-Pipenv-into-Emacs/';
                                   
              };
             (function() {
